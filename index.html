@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Samples - 実用的なWebアプリケーション集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .app-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .app-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .app-features li {
+            padding: 0.3rem 0;
+            color: #555;
+        }
+
+        .app-features li::before {
+            content: '✨ ';
+            color: #4ecdc4;
+        }
+
+        .app-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+
+        .status-live {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-coming {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: white;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .app-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌐 Web App Samples</h1>
+        <p>実用的なWebアプリケーションのサンプル集</p>
+    </div>
+
+    <div class="container">
+        <div class="apps-grid">
+            <!-- 色彩検定クイズアプリ -->
+            <div class="app-card">
+                <div class="app-icon">🎯</div>
+                <h2 class="app-title">
+                    色彩検定2級クイズアプリ
+                    <span class="status-badge status-live">公開中</span>
+                </h2>
+                <p class="app-description">
+                    AI搭載の高機能色彩検定学習システム。537問のデータベースと科学的学習アプローチで効率的な合格を目指します。
+                </p>
+                <ul class="app-features">
+                    <li>習熟度追跡とエビングハウス忘却曲線対応</li>
+                    <li>高度なフィルタリング機能（習熟度別・期間別）</li>
+                    <li>詳細な学習統計と分析機能</li>
+                    <li>応援キャラクターとゲーミフィケーション</li>
+                    <li>XSS対策済みのセキュア設計</li>
+                </ul>
+                <div class="app-actions">
+                    <a href="./color-quiz-app/" class="btn btn-primary">🚀 アプリを開く</a>
+                    <a href="./color-quiz-app/README.md" class="btn btn-secondary">📖 詳細を見る</a>
+                </div>
+            </div>
+
+            <!-- Firebase連携版（開発予定） -->
+            <div class="app-card">
+                <div class="app-icon">🔥</div>
+                <h2 class="app-title">
+                    Firebase連携版
+                    <span class="status-badge status-coming">開発中</span>
+                </h2>
+                <p class="app-description">
+                    Google認証とFirestore Databaseを活用した、マルチデバイス対応の学習アプリ。クラウド同期で学習データを安全に管理。
+                </p>
+                <ul class="app-features">
+                    <li>Google認証システム</li>
+                    <li>Firestore Database連携</li>
+                    <li>マルチデバイス学習履歴同期</li>
+                    <li>リアルタイム統計</li>
+                    <li>ソーシャル学習機能</li>
+                </ul>
+                <div class="app-actions">
+                    <a href="#" class="btn btn-primary" style="opacity: 0.6; cursor: not-allowed;">🚧 開発中</a>
+                    <a href="https://github.com/muumuu8181/web-app-samples" class="btn btn-secondary">📚 GitHub</a>
+                </div>
+            </div>
+
+            <!-- 今後の追加予定 -->
+            <div class="app-card">
+                <div class="app-icon">🔮</div>
+                <h2 class="app-title">
+                    今後の追加予定
+                    <span class="status-badge status-coming">企画中</span>
+                </h2>
+                <p class="app-description">
+                    実用的なWebアプリケーションを継続的に追加予定。モダンな技術スタックと優れたUXを提供します。
+                </p>
+                <ul class="app-features">
+                    <li>E-commerce Sample（ショッピングカート）</li>
+                    <li>Chat Application（リアルタイム通信）</li>
+                    <li>Task Management（プロジェクト管理）</li>
+                    <li>Weather Dashboard（天気予報API連携）</li>
+                    <li>PWA対応アプリケーション</li>
+                </ul>
+                <div class="app-actions">
+                    <a href="https://github.com/muumuu8181/web-app-samples/issues" class="btn btn-secondary">💡 要望・提案</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🤖 Generated with Claude Code | 👨‍💻 <a href="https://github.com/muumuu8181" style="color: white;">@muumuu8181</a></p>
+    </div>
+</body>
+</html>

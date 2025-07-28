@@ -4,7 +4,7 @@ Firebase対応の高機能色彩検定学習アプリケーション。科学的
 
 ## 🚀 デモ
 
-**👉 [今すぐ試す](https://muumuu8181.github.io/firebase-web-samples/color-quiz-app/)**
+**👉 [今すぐ試す](https://muumuu8181.github.io/web-app-samples/color-quiz-app/)**
 
 ## 🌟 主要機能
 
