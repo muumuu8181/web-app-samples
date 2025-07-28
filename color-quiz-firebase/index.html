@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4択クイズアプリ</title>
+    <link rel="stylesheet" href="quiz-style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="title">🎯 4択クイズアプリ</h1>
+            <div class="stats">
+                <span class="stat">正解数: <span id="correct-count">0</span></span>
+                <span class="stat">問題数: <span id="total-count">0</span></span>
+                <span class="stat">正解率: <span id="accuracy">0%</span></span>
+            </div>
+            <div class="answer-history" id="answer-history">
+                <span class="history-label">履歴:</span>
+                <div class="history-dots" id="history-dots"></div>
+            </div>
+            <div class="data-source" id="data-source">
+                <span class="source-indicator" id="source-indicator">📊 データソース: 確認中...</span>
+            </div>
+            <div class="category-summary" id="category-summary" style="display: none;">
+                <div class="category-info">
+                    <div class="major-category-title" id="major-category-title">色彩検定2級</div>
+                    <div class="minor-category-summary" id="minor-category-summary">読み込み中...</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Firebase認証UI -->
+        <div class="auth-section" id="auth-section">
+            <div class="auth-container">
+                <div class="cloud-status" id="cloud-status">
+                    <span class="status-indicator offline">🔒 オフラインモード</span>
+                </div>
+                <div class="auth-controls">
+                    <button class="control-btn auth-btn" id="login-btn">
+                        🔐 Googleでログイン
+                    </button>
+                    <button class="control-btn auth-btn secondary" id="logout-btn" style="display: none;">
+                        🚪 ログアウト
+                    </button>
+                    <div class="user-info" id="user-info" style="display: none;"></div>
+                </div>
+                <div class="sync-benefits">
+                    <h4>🌥️ クラウド同期の利点</h4>
+                    <ul>
+                        <li>📱 デバイス間での学習データ同期</li>
+                        <li>📊 詳細な学習統計とランキング</li>
+                        <li>💾 安全なデータバックアップ</li>
+                        <li>🏆 学習達成度の共有機能</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="category-display">
+                    <span class="major-category" id="major-category">色彩検定2級</span>
+                    <span class="category-separator">></span>
+                    <span class="minor-category" id="minor-category">読み込み中...</span>
+                </div>
+                <h2 class="question-number">問題 <span id="question-number">1</span></h2>
+                <p class="question-text" id="question-text">問題を読み込み中...</p>
+            </div>
+
+            <div class="options-section">
+                <button class="option-btn" id="option-1">A</button>
+                <button class="option-btn" id="option-2">B</button>
+                <button class="option-btn" id="option-3">C</button>
+                <button class="option-btn" id="option-4">D</button>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="character-section" id="character-section">
+                <div class="character-container">
+                    <div class="character-image">
+                        <img id="character-img" src="images/character-normal.svg" alt="応援キャラクター">
+                    </div>
+                    <div class="character-message" id="character-message">
+                        <p id="character-text">頑張って！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="question-count-setting">
+                    <label>
+                        問題数:
+                        <select id="question-count">
+                            <option value="5" selected>5問</option>
+                            <option value="10">10問</option>
+                            <option value="15">15問</option>
+                            <option value="20">20問</option>
+                            <option value="30">30問</option>
+                            <option value="50">50問</option>
+                            <option value="all">全問</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="quiz-mode-setting">
+                    <h3>モード選択:</h3>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="quiz-mode" value="normal" checked>
+                            <span class="radio-text">✨ 新規問題</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="quiz-mode" value="review-mastery">
+                            <span class="radio-text">🎯 習熟度別</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="quiz-mode" value="review-recent-incorrect">
+                            <span class="radio-text">⚡ 間違えた問題</span>
+                        </label>
+                    </div>
+                    
+                    <!-- 習熟度別選択 -->
+                    <div class="mastery-filter" id="mastery-filter" style="display: none;">
+                        <label>
+                            習熟度レベル:
+                            <select id="mastery-level-select">
+                                <option value="0-3">0-3 (要復習)</option>
+                                <option value="4-7">4-7 (普通)</option>
+                                <option value="8-10">8-10 (上級)</option>
+                                <option value="0-5">0-5 (基礎)</option>
+                                <option value="6-10">6-10 (応用)</option>
+                                <option value="custom">カスタム範囲</option>
+                            </select>
+                        </label>
+                        <div class="custom-mastery-range" id="custom-mastery-range" style="display: none;">
+                            <label>
+                                最小値: <input type="number" id="mastery-min" min="0" max="10" value="0">
+                            </label>
+                            <label>
+                                最大値: <input type="number" id="mastery-max" min="0" max="10" value="3">
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- 期間別選択 -->
+                    <div class="period-filter" id="period-filter" style="display: none;">
+                        <label>
+                            期間タイプ:
+                            <select id="period-type-select">
+                                <option value="within">〜以内</option>
+                                <option value="range">期間範囲</option>
+                            </select>
+                        </label>
+                        
+                        <!-- 以内選択 -->
+                        <div class="period-within" id="period-within">
+                            <label>
+                                期間:
+                                <select id="period-select">
+                                    <option value="today">今日間違えた</option>
+                                    <option value="3days">3日以内</option>
+                                    <option value="1week">1週間以内</option>
+                                    <option value="2weeks">2週間以内</option>
+                                    <option value="1month">1ヶ月以内</option>
+                                </select>
+                            </label>
+                        </div>
+                        
+                        <!-- 範囲選択 -->
+                        <div class="period-range" id="period-range" style="display: none;">
+                            <label>
+                                開始: <input type="number" id="period-start" min="0" max="365" value="7" step="1">日前
+                            </label>
+                            <label>
+                                終了: <input type="number" id="period-end" min="0" max="365" value="3" step="1">日前
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="control-btn" id="start-btn">クイズ開始</button>
+                <button class="control-btn" id="next-btn" style="display: none;">次の問題</button>
+                <button class="control-btn secondary" id="manual-btn">📖 使い方</button>
+                <div class="auto-progress-setting">
+                    <label>
+                        <input type="checkbox" id="auto-progress" checked>
+                        自動進行（2秒後に次の問題へ）
+                    </label>
+                </div>
+                <div class="character-settings">
+                    <label>
+                        形状:
+                        <select id="character-shape">
+                            <option value="oval">楕円</option>
+                            <option value="circle">円形</option>
+                            <option value="rounded">角丸</option>
+                        </select>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="skip-animations">
+                        エフェクト短縮（すぐに次へ）
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-section" id="results-section" style="display: none;">
+            <h2>結果</h2>
+            <div class="result-stats">
+                <div class="result-item">
+                    <span class="result-label">正解数</span>
+                    <span class="result-value" id="final-correct">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">問題数</span>
+                    <span class="result-value" id="final-total">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">正解率</span>
+                    <span class="result-value" id="final-accuracy">0%</span>
+                </div>
+            </div>
+            <div class="grade" id="grade"></div>
+            <div class="result-character">
+                <div class="result-character-container">
+                    <div class="result-character-image">
+                        <img id="result-character-img" src="images/character-happy.svg" alt="応援キャラクター">
+                    </div>
+                    <div class="result-character-message" id="result-character-message">
+                        <p id="result-character-text">よく頑張りました！</p>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="control-btn" id="restart-btn" style="display: none;">もう一度</button>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3>過去の成績</h3>
+            <div class="controls">
+                <button class="control-btn" id="clear-history">履歴をクリア</button>
+                <button class="control-btn secondary" id="category-stats-btn">📊 中分類別成績</button>
+                <button class="control-btn secondary" id="mastery-stats-btn">🎯 習熟度分析</button>
+            </div>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <!-- 統計モーダル -->
+    <div class="modal-overlay" id="stats-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="stats-modal-title">📊 統計情報</h2>
+                <button class="close-btn" id="close-stats">×</button>
+            </div>
+            <div class="modal-body" id="stats-modal-body">
+                <!-- 統計情報がここに表示される -->
+            </div>
+        </div>
+    </div>
+
+    <!-- マニュアルモーダル -->
+    <div class="modal-overlay" id="manual-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📖 4択クイズアプリ 使い方</h2>
+                <button class="close-btn" id="close-manual">×</button>
+            </div>
+            <div class="modal-body">
+                <section class="manual-section">
+                    <h3>🎯 基本的な使い方</h3>
+                    <ul>
+                        <li><strong>クイズ開始</strong>：「クイズ開始」ボタンをクリック</li>
+                        <li><strong>回答方法</strong>：4つの選択肢から1つをクリック</li>
+                        <li><strong>自動進行</strong>：チェックONで回答後2秒で自動的に次の問題へ</li>
+                        <li><strong>手動進行</strong>：チェックOFFで「次の問題」ボタンを表示</li>
+                        <li><strong>エフェクト短縮</strong>：チェックONで回答後0.3秒ですぐに次の問題へ</li>
+                    </ul>
+                </section>
+
+                <section class="manual-section">
+                    <h3>🎭 応援キャラクター機能</h3>
+                    <h4>📁 画像の配置場所</h4>
+                    <p><code>images/</code>フォルダに画像ファイルを配置してください</p>
+                    
+                    <h4>🎨 対応画像形式</h4>
+                    <p>PNG, JPG, JPEG, SVG, GIF, WebP</p>
+                    
+                    <h4>🔍 自動検出キーワード</h4>
+                    <ul>
+                        <li><strong>通常時</strong>：normal, default, base</li>
+                        <li><strong>正解時</strong>：happy, correct, smile, joy</li>
+                        <li><strong>不正解時</strong>：encourage, incorrect, cheer, support, fail</li>
+                        <li><strong>優秀時</strong>：excellent, perfect, great, best</li>
+                        <li><strong>良好時</strong>：good, nice, well</li>
+                    </ul>
+                    
+                    <h4>📝 ファイル名例</h4>
+                    <ul>
+                        <li><code>images/encourage.png</code> → 不正解時に使用</li>
+                        <li><code>images/character-happy.jpg</code> → 正解時に使用</li>
+                        <li><code>images/excellent-char.gif</code> → 優秀時に使用</li>
+                    </ul>
+                </section>
+
+                <section class="manual-section">
+                    <h3>🎪 アニメーションパターン</h3>
+                    <h4>正解時（5種類）</h4>
+                    <ul>
+                        <li><strong>Jump</strong>：上下ジャンプ</li>
+                        <li><strong>Bounce</strong>：複数回バウンド</li>
+                        <li><strong>Spin</strong>：360度回転</li>
+                        <li><strong>Pulse</strong>：拡大縮小＋明るさ変化</li>
+                        <li><strong>Zoom</strong>：ズームイン効果</li>
+                    </ul>
+                    
+                    <h4>不正解時（2種類）</h4>
+                    <ul>
+                        <li><strong>Encourage</strong>：左右揺れ</li>
+                        <li><strong>Shake</strong>：細かい振動</li>
+                    </ul>
+                </section>
+
+                <section class="manual-section">
+                    <h3>📐 キャラクター形状</h3>
+                    <ul>
+                        <li><strong>楕円</strong>：150×100px（横長、デフォルト）</li>
+                        <li><strong>円形</strong>：120×120px（従来型）</li>
+                        <li><strong>角丸</strong>：140×110px（四角ベース）</li>
+                    </ul>
+                </section>
+
+                <section class="manual-section">
+                    <h3>📊 データソース表示</h3>
+                    <ul>
+                        <li><span class="status-indicator json">🟢 緑色</span>：JavaScriptファイル/JSONファイル読み込み成功</li>
+                        <li><span class="status-indicator builtin">🟡 黄色</span>：内蔵データ使用</li>
+                        <li><span class="status-indicator error">🔴 赤色</span>：エラー発生（クリックで詳細表示）</li>
+                    </ul>
+                </section>
+
+                <section class="manual-section">
+                    <h3>📈 成績評価</h3>
+                    <ul>
+                        <li><strong>90%以上</strong>：🏆 優秀（Excellent）</li>
+                        <li><strong>70%以上</strong>：👍 良好（Good）</li>
+                        <li><strong>50%以上</strong>：📚 普通（Average）</li>
+                        <li><strong>50%未満</strong>：💪 要練習（Needs Improvement）</li>
+                    </ul>
+                </section>
+
+                <section class="manual-section">
+                    <h3>💾 データ管理</h3>
+                    <ul>
+                        <li><strong>成績保存</strong>：過去10回分の成績を自動保存</li>
+                        <li><strong>履歴削除</strong>：「履歴をクリア」ボタンですべて削除</li>
+                        <li><strong>データ保存場所</strong>：ブラウザのローカルストレージ</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="safe-storage.js"></script>
+    <script src="safe-dom-helper.js"></script>
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+    
+    <script>
+        // Firebase初期化とイベントリスナー設定
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Firebase初期化
+            const initialized = await window.firebaseConfig.initialize();
+            
+            if (initialized) {
+                document.getElementById('cloud-status').innerHTML = 
+                    '<span class="status-indicator online">🌟 Firebase接続中</span>';
+            } else {
+                document.getElementById('cloud-status').innerHTML = 
+                    '<span class="status-indicator error">⚠️ Firebase接続エラー</span>';
+            }
+            
+            // ログインボタンのイベントリスナー
+            document.getElementById('login-btn').addEventListener('click', async () => {
+                try {
+                    await window.firebaseConfig.signInWithGoogle();
+                } catch (error) {
+                    alert('ログインに失敗しました: ' + error.message);
+                }
+            });
+            
+            // ログアウトボタンのイベントリスナー
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                try {
+                    await window.firebaseConfig.signOut();
+                } catch (error) {
+                    alert('ログアウトに失敗しました: ' + error.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

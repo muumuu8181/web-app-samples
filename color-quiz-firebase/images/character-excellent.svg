@@ -1,0 +1,42 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with crown -->
+  <circle cx="60" cy="60" r="55" fill="#FFE4E1" stroke="#FFD700" stroke-width="4"/>
+  
+  <!-- Crown -->
+  <rect x="45" y="15" width="30" height="8" fill="#FFD700"/>
+  <polygon points="45,15 50,5 55,15" fill="#FFD700"/>
+  <polygon points="55,15 60,8 65,15" fill="#FFD700"/>
+  <polygon points="65,15 70,5 75,15" fill="#FFD700"/>
+  <circle cx="50" cy="12" r="2" fill="#FF1493"/>
+  <circle cx="60" cy="10" r="2" fill="#FF1493"/>
+  <circle cx="70" cy="12" r="2" fill="#FF1493"/>
+  
+  <!-- Sparkles -->
+  <polygon points="15,30 17,35 22,33 17,38 15,43 13,38 8,33 13,35" fill="#FFD700"/>
+  <polygon points="95,25 97,30 102,28 97,33 95,38 93,33 88,28 93,30" fill="#FFD700"/>
+  <polygon points="20,80 22,85 27,83 22,88 20,93 18,88 13,83 18,85" fill="#FFD700"/>
+  <polygon points="100,70 102,75 107,73 102,78 100,83 98,78 93,73 98,75" fill="#FFD700"/>
+  
+  <!-- Face -->
+  <circle cx="60" cy="60" r="40" fill="#FFF8DC"/>
+  
+  <!-- Eyes (star eyes) -->
+  <polygon points="50,50 52,46 54,50 58,50 55,53 56,57 52,55 48,57 49,53 46,50" fill="#FFD700"/>
+  <polygon points="70,50 72,46 74,50 78,50 75,53 76,57 72,55 68,57 69,53 66,50" fill="#FFD700"/>
+  
+  <!-- Nose -->
+  <ellipse cx="60" cy="58" rx="2" ry="1" fill="#FFB6C1"/>
+  
+  <!-- Mouth (huge smile) -->
+  <path d="M 48 68 Q 60 82 72 68" stroke="#333" stroke-width="3" fill="none"/>
+  
+  <!-- Cheeks (very rosy) -->
+  <circle cx="40" cy="62" r="6" fill="#FF1493" opacity="0.8"/>
+  <circle cx="80" cy="62" r="6" fill="#FF1493" opacity="0.8"/>
+  
+  <!-- Hair -->
+  <path d="M 25 45 Q 35 25 60 30 Q 85 25 95 45 Q 90 40 85 42 Q 75 35 60 35 Q 45 35 35 42 Q 30 40 25 45" fill="#8B4513"/>
+  
+  <!-- Text -->
+  <text x="60" y="110" text-anchor="middle" font-family="Arial" font-size="10" fill="#333">🏆 すごい！</text>
+</svg>
